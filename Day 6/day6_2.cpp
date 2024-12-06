@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#define LIMIT 25000
 
 using namespace std;
 
@@ -14,22 +15,12 @@ void show_floor(Matrix M){
     }
 }
 
-int count_X(Matrix M){
-    int cont = 0;
-
-    int n = M.size(), m = M.at(0).size();
-    for(int i = 0; i < n; i++)
-        for(int j = 0; j < m; j++)
-            if(M.at(i).at(j) == 'X') cont++;
-
-    return cont;
-}
-
-void simulate(Matrix& M, int f, int c){
+int simulate(Matrix& M, int f, int c){
+    int limit_checker = 0;
     enum move direction = UP;
     
     int n = M.size(), m = M.at(0).size();
-    while(0 <= f && f < n && 0 <= c && c < m){
+    while(0 <= f && f < n && 0 <= c && c < m && limit_checker < LIMIT){
         //cout << f << " - " << c << '\n';// cin >> cont;
         M.at(f).at(c) = 'X';
         switch(direction){
@@ -50,7 +41,11 @@ void simulate(Matrix& M, int f, int c){
                 else c--;
                 break;
         }
+
+        limit_checker++;
     }
+
+    return limit_checker >= LIMIT;
 }
 
 int main(void){
@@ -73,11 +68,18 @@ int main(void){
     }
     inputFile.close();
 
-    // show_floor(floor);
-    simulate(floor, row, column);
-    // show_floor(floor);
+    int cont = 0;
+    int n = floor.size(), m = floor.at(0).size();
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < m; j++)
+            if(floor.at(i).at(j) == '.'){
+                Matrix copy = floor;
+                copy.at(i).at(j) = '#';
+                cont += simulate(copy, row, column);
+                //show_floor(copy);
+            }
 
-    cout << count_X(floor) << '\n';
+    cout << cont << '\n';
 
     return 0;
 }
